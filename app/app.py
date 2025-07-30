@@ -11,7 +11,7 @@ import seaborn as sns
 # Carregamento dos dados
 @st.cache_data
 def load_data():
-    return pd.read_csv("app/data/datatran2025.csv", encoding="ISO-8859-1", delimiter=';')
+    return pd.read_csv("data/datatran2025.csv", encoding="ISO-8859-1", delimiter=';')
     #return pd.read_csv(r"data\datatran2025_tratado.csv", delimiter=',')
 
 df = load_data()
@@ -96,6 +96,18 @@ if features:
     col4.metric("AIC", f"{model_ols.aic:.2f}")
     col5.metric("BIC", f"{model_ols.bic:.2f}")
     col6.metric("Prob(F)", f"{model_ols.f_pvalue:.2e}")
+
+        # Gráfico de dispersão com linha de regressão (se apenas uma variável preditora)
+    if len(features) == 1:
+        st.subheader(f"📉 Regressão Linear: {target} vs {features[0]}")
+        fig, ax = plt.subplots()
+        sns.regplot(x=X[features[0]], y=y, ax=ax, line_kws={"color": "red"})
+        ax.set_xlabel(features[0])
+        ax.set_ylabel(target)
+        st.pyplot(fig)
+    else:
+        st.info("O gráfico de regressão só é exibido quando há uma única variável preditora.")
+
 
 else:
     st.warning("Selecione pelo menos uma variável preditora.")
